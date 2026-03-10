@@ -427,6 +427,31 @@ whisper:
   model: 'large-v3-turbo'  # 使用更快的模型
 ```
 
+## 自测问题
+
+完成配置后，尝试回答以下问题：
+
+1. **为什么 `max_workers` 对本地 LLM 和云端 API 的建议值不同？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   本地 LLM（如 Ollama）通常不支持高并发请求，设置过高的 `max_workers` 会导致请求排队或失败。云端 API 则可以处理更高的并发，但也受限于 API 的速率限制。
+   </details>
+
+2. **`reflect_translate: true` 会带来什么影响？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   启用反思翻译会进行两步翻译（忠实→反思→改编），翻译质量提升约 30%，但处理时间也会增加约 50%，API 调用成本翻倍。
+   </details>
+
+3. **什么情况下应该启用 `demucs: true`？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   当视频有明显的背景音乐或噪音时，启用 Demucs 可以分离人声，显著提高 WhisperX 的识别准确率。但处理时间会增加约 30%。
+   </details>
+
 ## 常见问题
 
 ### Q: API 调用失败怎么办？

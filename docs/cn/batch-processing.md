@@ -343,6 +343,33 @@ batch/output/ERROR/*/log/
 4. **定期备份任务文件**：保存 tasks_setting.xlsx 的副本
 5. **检查输出质量**：处理完成后检查几个输出确认质量
 
+## 自测问题
+
+完成批处理配置后，尝试回答以下问题：
+
+1. **批处理失败后如何恢复？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   直接重新运行 `python -m batch.utils.batch_processor`。程序会自动识别失败的任务并重试。失败任务的中间结果保存在 `batch/output/ERROR/` 目录。
+   </details>
+
+2. **如何为不同视频设置不同的目标语言？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   在 `tasks_setting.xlsx` 中为每行设置不同的 `Target Language` 值。程序会动态切换语言配置。
+   </details>
+
+3. **批处理时 GPU 内存不足怎么办？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用云端 WhisperX API 代替本地 GPU
+   2. 在每个视频处理后调用 `torch.cuda.empty_cache()`
+   3. 减少并发数（如果使用了并发处理）
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [配置说明](configuration.md) 了解详细配置

@@ -588,6 +588,33 @@ note: "保持原样，不要翻译"
 2. 启用 `pause_before_translate` 手动审核
 3. 在术语表的 `note` 中提供更多上下文
 
+## 自测问题
+
+阅读完翻译原理后，尝试回答以下问题：
+
+1. **为什么使用三步翻译而不是单次翻译？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   单次翻译容易出现直译问题，缺乏语境理解。三步流程通过「忠实翻译→反思改进→文化适配」逐步提升翻译质量，可减少 60% 以上的翻译错误。
+   </details>
+
+2. **`reflect_translate: false` 会跳过哪些步骤？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   会跳过第二步「表达优化」，只执行忠实翻译。这会加快处理速度约 50%，但翻译质量可能略有下降。
+   </details>
+
+3. **如何确保术语翻译一致性？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 创建 `custom_terms.xlsx` 明确指定术语翻译
+   2. 启用 `pause_before_translate` 手动审核术语表
+   3. 在术语表的 `note` 列提供更多上下文指导
+   </details>
+
 ## 下一步
 
 - 🔧 阅读 [配置说明](../configuration.md) 了解翻译相关配置

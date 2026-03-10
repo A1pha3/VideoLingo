@@ -403,6 +403,37 @@ result = translate_video_task.delay(
 4. **并发控制**：限制同时处理的任务数
 5. **状态持久化**：保存任务状态到数据库
 
+## 自测问题
+
+完成集成开发后，尝试回答以下问题：
+
+1. **如何在 API 服务中实现异步处理？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   使用后台任务（如 FastAPI 的 BackgroundTasks）或消息队列（如 Celery）。视频处理通常需要几分钟，不应阻塞 HTTP 请求。返回任务 ID，让客户端轮询状态。
+   </details>
+
+2. **如何确保处理失败时能够恢复？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用断点续传机制（检查中间文件是否存在）
+   2. 将任务状态持久化到数据库
+   3. 实现重试逻辑（如 Celery 的重试机制）
+   4. 保存错误日志以便排查
+   </details>
+
+3. **如何限制并发处理数量？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用信号量（Semaphore）限制并发
+   2. 配置 Celery 的并发 worker 数量
+   3. 使用队列系统控制任务分发速率
+   4. 监控 GPU 内存使用，动态调整并发数
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [API 参考](api-reference.md) 了解核心 API

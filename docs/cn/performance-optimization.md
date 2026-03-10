@@ -446,6 +446,31 @@ curl -I https://api.openai.com
 4. **定期清理缓存**：避免磁盘占满
 5. **监控资源使用**：及时发现瓶颈
 
+## 自测问题
+
+完成性能优化后，尝试回答以下问题：
+
+1. **如何判断当前瓶颈是 GPU 还是 API？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   使用 `nvidia-smi dmon -s u` 监控 GPU 利用率。如果 GPU 利用率持续高于 80%，瓶颈在 GPU；如果 GPU 利用率低但处理慢，瓶颈可能在 API 调用或网络延迟。
+   </details>
+
+2. **`reflect_translate: false` 会带来多大的性能提升？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   关闭反思翻译可以减少约 50% 的 LLM 调用次数，处理时间缩短约 30-40%。但翻译质量可能略有下降，建议根据实际需求权衡。
+   </details>
+
+3. **为什么推荐将 `output/` 和 `_model_cache/` 放在 SSD 上？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   视频处理涉及大量音频/视频文件读写，模型加载也需要读取大文件。SSD 的随机读写速度比 HDD 快 5-10 倍，可以显著减少 I/O 等待时间。
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [配置说明](configuration.md) 了解详细配置

@@ -587,6 +587,37 @@ https://github.com/Huanshere/VideoLingo/issues
 
 ---
 
+## 自测问题
+
+遇到问题时，尝试回答以下问题来定位原因：
+
+1. **如何快速判断是 ASR 问题还是翻译问题？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   检查 `output/log/asr_result.json`。如果转录内容正确但翻译错误，是翻译问题；如果转录内容本身有误，是 ASR 问题。
+   </details>
+
+2. **GPU 内存不足时，有哪些解决方案？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用更小的 Whisper 模型（如 `medium` 而非 `large-v3`）
+   2. 减小 `max_workers` 降低并发
+   3. 使用云端 WhisperX API
+   4. 关闭其他占用 GPU 的程序
+   </details>
+
+3. **翻译质量差时，应该优先检查什么？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 检查使用的模型是否足够强大（推荐 Claude/GPT-4）
+   2. 检查是否启用了反思翻译（`reflect_translate: true`）
+   3. 检查是否有自定义术语表（`custom_terms.xlsx`）
+   4. 检查摘要长度是否提供了足够的上下文
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [配置说明](configuration.md) 优化配置

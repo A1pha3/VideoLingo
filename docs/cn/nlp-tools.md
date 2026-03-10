@@ -230,7 +230,35 @@ def split_long_by_root_main(
     """分割过长句子"""
 ```
 
+## 自测问题
+
+使用 NLP 工具时，尝试回答以下问题：
+
+1. **spaCy 在 VideoLingo 中的主要作用是什么？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   spaCy 主要用于句子分割（按标点符号和语义边界分割长句）。它比简单的正则表达式分割更智能，可以识别缩写、引号等特殊情况，避免错误的分割点。
+   </details>
+
+2. **为什么需要为不同语言加载不同的 spaCy 模型？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   不同语言有不同的语法结构和分词规则。例如，中文需要分词（将连续字序列切分为词），而英文已经有空格分隔。使用对应语言的模型可以获得最佳的分词和分割效果。
+   </details>
+
+3. **如何添加对新语言的 NLP 支持？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 在 `spacy_model_map` 中添加语言代码到 spaCy 模型的映射
+   2. 下载对应的 spaCy 模型
+   3. 测试分割效果，必要时调整参数
+   4. 如果 spaCy 不支持该语言，可以考虑使用其他 NLP 库
+   </details>
+
 ## 下一步
 
-- 📖 阅读 [架构设计](architecture.md) 了解整体流程
-- 📖 阅读 [翻译原理](advanced/translation.md) 了解后续处理
+- 📖 阅读 [翻译原理](advanced/translation.md) 了解翻译系统
+- 📖 阅读 [开发指南](development.md) 了解代码定制

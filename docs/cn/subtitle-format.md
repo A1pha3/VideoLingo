@@ -252,6 +252,37 @@ else:
 4. **长度适中**：每行不超过 75 字符
 5. **语言规范**：使用正确的标点和大小写
 
+## 自测问题
+
+完成字幕格式学习后，尝试回答以下问题：
+
+1. **SRT 和 ASS 格式的主要区别是什么？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   SRT 是最简单的字幕格式，只包含时间轴和文本。ASS 支持丰富的样式（字体、颜色、位置、动画等），适合需要精细控制的场景。VideoLingo 默认生成 SRT，但可以通过 FFmpeg 参数使用 ASS 样式。
+   </details>
+
+2. **如何确保字幕与视频同步？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用 WhisperX 的词级对齐功能获取精确时间戳
+   2. 检查 `output/log/asr_result.json` 确认转录准确
+   3. 如果字幕提前或延后，可能是视频帧率问题
+   4. 使用 FFmpeg 的 `setpts` 滤镜调整时间轴
+   </details>
+
+3. **字幕长度超过屏幕宽度怎么办？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 在配置中减小 `subtitle.max_length`（默认 75 字符）
+   2. 启用自动换行（SRT 格式支持多行）
+   3. 使用 LLM 裁剪功能缩短文本
+   4. 调整字体大小以适应屏幕
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [架构设计](architecture.md) 了解字幕生成流程

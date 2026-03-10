@@ -356,3 +356,33 @@ rm -rf output/gpt_log/
 - 💬 [在线 AI 助手](https://share.fastgpt.in/chat/share?shareId=066w11n3r9aq6879r4z0v9rh)
 - 🌐 [在线体验](https://videolingo.io)
 - 📧 team@videolingo.io
+
+---
+
+## 快速诊断指南
+
+遇到问题时，按以下流程快速定位：
+
+```
+问题发生
+    │
+    ├─→ 安装问题 ─→ 检查 Python 版本、CUDA 版本、FFmpeg
+    │
+    ├─→ ASR 问题 ─→ 检查 output/log/asr_result.json
+    │
+    ├─→ 翻译问题 ─→ 检查 output/gpt_log/error.json
+    │
+    ├─→ 字幕问题 ─→ 检查 output/srt_files/*.srt
+    │
+    └─→ 配音问题 ─→ 检查 TTS API 配置和日志
+```
+
+## 相关资源
+
+| 资源 | 链接 |
+|------|------|
+| 故障排除 | [troubleshooting.md](troubleshooting.md) |
+| 配置说明 | [configuration.md](configuration.md) |
+| 开发指南 | [development.md](development.md) |
+| 在线 AI 助手 | [FastGPT](https://share.fastgpt.in/chat/share?shareId=066w11n3r9aq6879r4z0v9rh) |
+| GitHub Issues | [提交问题](https://github.com/Huanshere/VideoLingo/issues) |

@@ -222,6 +222,41 @@ text = t("items" if count > 1 else "item")
 4. **使用专业翻译**：确保翻译质量
 5. **收集反馈**：接受用户对翻译的改进建议
 
+## 自测问题
+
+添加国际化支持时，尝试回答以下问题：
+
+1. **如何添加新的界面语言？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 在 `translations/` 目录创建新的语言文件（如 `fr.json`）
+   2. 复制 `en.json` 作为模板
+   3. 翻译所有键值
+   4. 在 `config.yaml` 的 `display_language` 中添加选项
+   5. 在 `translations/i18n.py` 中注册新语言
+   </details>
+
+2. **翻译键命名有什么规范？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用点号分隔命名空间：`section.action.description`
+   2. 保持简洁但具有描述性
+   3. 使用英文命名，便于维护
+   4. 相似功能的键使用统一前缀
+   </details>
+
+3. **如何确保翻译质量？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用专业翻译或母语者审核
+   2. 保持术语一致性
+   3. 考虑文化差异和习惯表达
+   4. 测试 UI 显示效果（不同语言文本长度差异）
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [UI 定制指南](ui-customization.md) 了解界面开发

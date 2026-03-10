@@ -358,6 +358,37 @@ analysis_template = """
 4. **记录有效版本**：保存好的 Prompt 版本
 5. **版本控制**：Prompt 变更也应版本控制
 
+## 自测问题
+
+设计 Prompt 时，尝试回答以下问题：
+
+1. **如何确保 LLM 输出符合预期的 JSON 格式？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 在 Prompt 末尾明确要求「Output in only JSON format and no other text」
+   2. 启用 JSON 模式（`llm_support_json: true`）
+   3. 提供完整的 JSON 示例结构
+   4. 使用 `ask_gpt` 的 `resp_type="json"` 参数自动解析
+   </details>
+
+2. **为什么需要在 Prompt 中提供上下文？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   上下文帮助 LLM 理解翻译场景，包括：视频主题、前文后文、术语表等。充足的上下文可以减少 50% 以上的翻译错误，确保术语一致性和语义连贯性。
+   </details>
+
+3. **如何调试 Prompt 问题？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 检查 `output/gpt_log/` 中的 LLM 调用日志
+   2. 使用 A/B 测试对比不同 Prompt 版本
+   3. 逐步简化 Prompt 定位问题
+   4. 尝试不同的模型（某些模型对特定格式支持更好）
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [翻译原理](advanced/translation.md) 了解翻译系统

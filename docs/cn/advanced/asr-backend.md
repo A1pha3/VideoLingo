@@ -711,6 +711,31 @@ if __name__ == "__main__":
     print(f"Transcribed {len(result['segments'])} segments")
 ```
 
+## 自测问题
+
+完成 ASR 后端开发后，尝试回答以下问题：
+
+1. **ASR 函数返回的数据结构必须包含哪些字段？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   必须包含 `segments` 数组和 `language` 字符串。每个 segment 必须包含 `start`、`end`、`text` 字段，可选包含 `words` 数组用于词级对齐。
+   </details>
+
+2. **为什么词级对齐（word-level alignment）很重要？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   词级对齐精确到每个单词的开始和结束时间，这对于后续的字幕分割（确保字幕与语音同步）和配音生成（精确控制语速）至关重要。
+   </details>
+
+3. **如何处理超长音频文件？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   将音频分段处理，每段不超过 API 限制（通常 30 分钟）。处理完成后调整时间偏移并合并结果。注意保持分段边界处的连续性。
+   </details>
+
 ## 下一步
 
 - 🔌 阅读 [TTS 后端扩展](tts-backend.md) 学习添加 TTS 引擎

@@ -542,6 +542,31 @@ git push origin feature/my-feature
 
 6. **创建 PR**描述你的更改
 
+## 自测问题
+
+完成开发环境搭建后，尝试回答以下问题：
+
+1. **为什么推荐使用 `pip install -e .` 安装？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   `-e` 参数表示「可编辑模式」，代码修改后立即生效，无需重新安装。这对于开发调试非常重要。
+   </details>
+
+2. **如何单独测试某个处理步骤？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   每个步骤文件都可以直接运行：`python -m core._2_asr`。也可以在 Python REPL 中导入并调用对应函数。
+   </details>
+
+3. **断点续传机制如何帮助调试？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   已完成的步骤会保存中间结果，下次运行时自动跳过。调试时可以手动删除特定步骤的输出文件，只重新运行该步骤。
+   </details>
+
 ## 下一步
 
 - 🔌 阅读 [TTS 后端扩展](advanced/tts-backend.md) 学习添加新引擎

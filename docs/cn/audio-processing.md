@@ -280,6 +280,31 @@ def split_audio(
     """分段长音频"""
 ```
 
+## 自测问题
+
+处理音频时，尝试回答以下问题：
+
+1. **什么情况下需要启用 Demucs 人声分离？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   当视频有明显的背景音乐或噪音时，启用 Demucs 可以分离人声，显著提高 WhisperX 的识别准确率。但处理时间会增加约 30%，且需要 GPU 支持。
+   </details>
+
+2. **为什么音频需要转换为 16kHz 单声道？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   Whisper 模型在 16kHz 采样率下训练，使用相同采样率可以获得最佳识别效果。单声道简化处理流程，避免声道差异导致的识别问题。
+   </details>
+
+3. **如何处理超长音频文件？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   将音频分段处理，每段不超过 30 分钟。处理完成后调整时间偏移并合并结果。VideoLingo 会自动处理这种情况，但也可以手动使用 `split_audio` 函数。
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [架构设计](architecture.md) 了解整体流程

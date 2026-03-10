@@ -294,6 +294,62 @@ conda deactivate
 conda env remove -n videolingo
 ```
 
+## 验证安装
+
+运行以下命令验证安装是否成功：
+
+```bash
+# 激活环境
+conda activate videolingo
+
+# 启动 Web 界面
+streamlit run st.py
+```
+
+如果浏览器自动打开并显示 VideoLingo 界面，说明安装成功！
+
+## 自测问题
+
+完成安装后，尝试回答以下问题：
+
+1. **为什么推荐使用 Conda 管理 Python 环境？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   Conda 可以隔离项目依赖，避免不同项目之间的版本冲突。VideoLingo 需要特定版本的 PyTorch 和 CUDA，Conda 可以确保这些依赖正确安装。
+   </details>
+
+2. **RTX 50 系列显卡需要使用哪个 CUDA 版本的 PyTorch？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   RTX 50 系列（Blackwell 架构）需要 PyTorch 编译时包含 CUDA 12.8+ 和 sm_100 内核，应使用 cu129 索引安装。
+   </details>
+
+3. **FFmpeg 的作用是什么？为什么必须安装？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   FFmpeg 用于视频和音频处理，包括格式转换、音频提取、字幕烧录等。VideoLingo 的核心功能依赖 FFmpeg，没有它无法正常工作。
+   </details>
+
+## 卸载
+
+```bash
+# 停止所有 VideoLingo 进程
+pkill -f streamlit
+
+# 卸载 Python 包
+pip uninstall videolingo
+
+# （可选）删除模型缓存
+rm -rf _model_cache/
+
+# （可选）删除 Conda 环境
+conda deactivate
+conda env remove -n videolingo
+```
+
 ## 下一步
 
 - ⚙️ 阅读 [配置说明](configuration.md) 了解如何配置 API 密钥和其他设置

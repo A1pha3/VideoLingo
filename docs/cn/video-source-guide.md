@@ -199,6 +199,34 @@ ffmpeg -i input_4k.mp4 -s 1920x1080 output_1080p.mp4
 ffmpeg -i input.mp4 -ss 00:00:10 -to 00:01:00 -c copy output.mp4
 ```
 
+## 自测问题
+
+处理不同视频来源时，尝试回答以下问题：
+
+1. **YouTube 下载失败怎么办？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 更新 yt-dlp：`pip install --upgrade yt-dlp`
+   2. 使用 cookies 绕过登录限制：`cookiesfrombrowser: chrome`
+   3. 检查视频是否有地区限制
+   4. 尝试不同的分辨率选项
+   </details>
+
+2. **如何处理有背景音乐的视频？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   在配置中启用 `demucs: true`，会在转录前分离人声和背景音乐。这可以显著提高 WhisperX 的识别准确率，但处理时间会增加约 30%。
+   </details>
+
+3. **本地视频文件支持哪些格式？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   VideoLingo 支持 FFmpeg 能处理的所有格式，包括：mp4、mov、avi、mkv、flv、wmv、webm 等。音频文件也支持：wav、mp3、flac、m4a、ogg。
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [批处理指南](batch-processing.md) 批量处理视频

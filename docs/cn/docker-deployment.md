@@ -466,6 +466,33 @@ docker logs -f videolingo
 docker exec -it videolingo /bin/bash
 ```
 
+## 自测问题
+
+完成 Docker 部署后，尝试回答以下问题：
+
+1. **如何验证 GPU 在 Docker 中可用？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   运行 `docker run --rm --gpus all nvidia/cuda:12.4.1-base-ubuntu20.04 nvidia-smi`。如果显示 GPU 信息，说明 NVIDIA Container Toolkit 配置正确。
+   </details>
+
+2. **为什么需要挂载 `_model_cache` 目录？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   模型文件（Whisper、spaCy）体积较大（约 3GB）。挂载缓存目录可以避免每次重启容器时重新下载模型，节省时间和带宽。
+   </details>
+
+3. **如何实现多实例负载均衡？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 运行多个 Docker 容器，每个使用不同的 GPU 和端口
+   2. 使用 Nginx 配置反向代理和负载均衡
+   3. 确保 Streamlit WebSocket 连接正确转发（配置 `proxy_set_header Upgrade` 和 `Connection`）
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [配置说明](configuration.md) 了解详细配置

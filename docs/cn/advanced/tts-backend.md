@@ -502,6 +502,31 @@ if __name__ == "__main__":
     print(f"Generated: {result}")
 ```
 
+## 自测问题
+
+完成 TTS 后端开发后，尝试回答以下问题：
+
+1. **TTS 函数必须返回什么？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   必须返回生成的音频文件路径（`output_path`）。失败时应抛出异常，而不是返回 None 或空字符串。
+   </details>
+
+2. **如何支持声音克隆功能？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   在函数参数中添加 `refer_wav` 参数，接收参考音频路径。然后在 API 调用时将参考音频作为文件上传。
+   </details>
+
+3. **为什么需要缓存机制？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   TTS API 调用通常有成本限制和延迟。缓存可以避免重复生成相同的音频，节省成本和时间。建议使用文本内容和声音参数的组合作为缓存键。
+   </details>
+
 ## 下一步
 
 - 🔌 阅读 [ASR 后端扩展](asr-backend.md) 学习添加 ASR 引擎

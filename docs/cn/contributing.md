@@ -381,6 +381,41 @@ Prompt 位于 `core/prompts.py`，修改时：
 - Email: team@videolingo.io
 - Twitter: [@Huanshere](https://twitter.com/Huanshere)
 
+## 自测问题
+
+准备提交贡献前，尝试回答以下问题：
+
+1. **提交 PR 前应该检查哪些内容？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 代码通过所有测试
+   2. 遵循代码风格规范
+   3. 更新了相关文档
+   4. 提交信息清晰描述变更
+   5. PR 描述完整，包含变更说明和测试结果
+   </details>
+
+2. **如何保持 Fork 与上游仓库同步？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 添加上游仓库：`git remote add upstream https://github.com/Huanshere/VideoLingo.git`
+   2. 拉取最新代码：`git fetch upstream`
+   3. 合并到本地：`git checkout main && git merge upstream/main`
+   4. 推送到 Fork：`git push origin main`
+   </details>
+
+3. **什么样的 Issue 更容易被接受？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 问题描述清晰，包含复现步骤
+   2. 提供了环境信息和日志
+   3. 功能建议说明了使用场景和价值
+   4. 提供了可能的解决方案
+   </details>
+
 ## 下一步
 
 - 📖 阅读 [开发指南](development.md) 开始开发

@@ -317,7 +317,39 @@ else:
 4. **错误处理**：使用 `st.error` 显示错误信息
 5. **响应式设计**：使用 `st.columns` 适配不同屏幕
 
+## 自测问题
+
+开发 UI 组件时，尝试回答以下问题：
+
+1. **如何保持 Streamlit 组件的状态？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   使用 `st.session_state` 字典存储状态。Streamlit 每次用户交互都会重新运行脚本，需要用 session_state 来持久化数据。例如：`st.session_state.counter = 0`。
+   </details>
+
+2. **如何组织复杂的 UI 布局？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用 `st.sidebar` 放置设置选项
+   2. 使用 `st.tabs` 分隔不同功能区域
+   3. 使用 `st.container` 组织相关组件
+   4. 使用 `st.columns` 创建并排布局
+   5. 将复杂组件拆分为独立函数或模块
+   </details>
+
+3. **如何处理长时间运行的任务？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   1. 使用 `st.progress` 和 `st.status` 显示进度
+   2. 使用 `st.spinner` 显示加载状态
+   3. 对于超长任务，考虑使用后台任务（如 Celery）
+   4. 使用 `st.empty()` 占位符动态更新内容
+   </details>
+
 ## 下一步
 
-- 📖 阅读 [开发指南](development.md) 了解开发环境
-- 📖 阅读 [API 参考](api-reference.md) 了解核心 API
+- 📖 阅读 [国际化指南](i18n-guide.md) 了解多语言支持
+- 📖 阅读 [开发指南](development.md) 了解代码规范

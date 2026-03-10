@@ -653,6 +653,31 @@ except Exception as e:
 
 ---
 
+## 自测问题
+
+阅读完 API 参考后，尝试回答以下问题：
+
+1. **如何只执行字幕生成流程，跳过配音？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   只调用步骤 1-7 的函数，不调用步骤 8-12 的配音相关函数。也可以在配置中设置 `dubbing.enabled: false`。
+   </details>
+
+2. **`@check_file_exists` 装饰器的作用是什么？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   实现断点续传功能。如果目标文件已存在，则跳过函数执行，直接使用已有结果。这对于长时间处理任务非常有用。
+   </details>
+
+3. **如何自定义 LLM Prompt？**
+   
+   <details>
+   <summary>点击查看答案</summary>
+   在 `core/prompts.py` 中修改对应的 Prompt 函数。建议保留原有的 JSON 输出格式，以确保后续解析正常工作。
+   </details>
+
 ## 下一步
 
 - 🔧 阅读 [开发指南](development.md) 学习开发环境搭建

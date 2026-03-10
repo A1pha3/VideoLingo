@@ -64,7 +64,7 @@
 | [视频源管理](video-source-guide.md) | YouTube 下载与视频处理 | 15 分钟 |
 | [字幕格式定制](subtitle-format.md) | SRT 格式与样式定制 | 15 分钟 |
 | [配置模板](config-templates.md) | 常见场景配置模板 | 20 分钟 |
-| [集成示例](integration-examples.md | API 集成与工作流 | 25 分钟 |
+| [集成示例](integration-examples.md) | API 集成与工作流 | 25 分钟 |
 | [常见问题](faq.md) | 30 个常见问题解答 | 20 分钟 |
 
 ## 学习路径
