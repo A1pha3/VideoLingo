@@ -40,8 +40,32 @@
 
 | 文档 | 描述 | 预计阅读时间 |
 |------|------|--------------|
+| [批处理指南](batch-processing.md) | 批量处理多个视频 | 15 分钟 |
+| [Docker 部署](docker-deployment.md) | 容器化部署指南 | 20 分钟 |
+| [性能优化](performance-optimization.md) | 性能调优与加速 | 25 分钟 |
+| [安全实践](security-best-practices.md) | 安全配置与数据保护 | 20 分钟 |
 | [故障排除](troubleshooting.md) | 常见问题及解决方案 | 15 分钟 |
 | [贡献指南](contributing.md) | 如何参与项目贡献 | 10 分钟 |
+
+### 开发专题
+
+| 文档 | 描述 | 预计阅读时间 |
+|------|------|--------------|
+| [UI 定制](ui-customization.md) | Streamlit 界面定制 | 20 分钟 |
+| [国际化指南](i18n-guide.md) | 多语言支持开发 | 15 分钟 |
+| [NLP 工具](nlp-tools.md) | spaCy 分割系统 | 20 分钟 |
+| [音频处理](audio-processing.md) | 音频分离与预处理 | 20 分钟 |
+| [Prompt 工程](prompt-engineering.md) | LLM Prompt 优化 | 25 分钟 |
+
+### 参考资料
+
+| 文档 | 描述 | 预计阅读时间 |
+|------|------|--------------|
+| [视频源管理](video-source-guide.md) | YouTube 下载与视频处理 | 15 分钟 |
+| [字幕格式定制](subtitle-format.md) | SRT 格式与样式定制 | 15 分钟 |
+| [配置模板](config-templates.md) | 常见场景配置模板 | 20 分钟 |
+| [集成示例](integration-examples.md | API 集成与工作流 | 25 分钟 |
+| [常见问题](faq.md) | 30 个常见问题解答 | 20 分钟 |
 
 ## 学习路径
 
