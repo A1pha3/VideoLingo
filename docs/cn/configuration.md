@@ -5,6 +5,7 @@
 ## 学习目标
 
 完成本教程后，你将能够：
+
 - 理解所有配置项的含义
 - 根据需求优化配置
 - 解决配置相关的常见问题
@@ -13,7 +14,7 @@
 
 VideoLingo 的主配置文件位于项目根目录：
 
-```
+```text
 VideoLingo/
 └── config.yaml
 ```
@@ -48,6 +49,426 @@ vim config.yaml
 ```
 
 > ⚠️ **注意**：直接编辑后需要重启 Streamlit 才能生效。
+
+## 先看这一节：首次配置应该怎么做
+
+如果你是第一次打开 VideoLingo，不建议一上来就逐个研究所有参数。更高效的方式是先完成一套能跑通的最小配置，再按效果逐步细调。
+
+### 先分清 3 类配置
+
+#### 第一类：必填项，不填就无法正常跑通
+
+- `api.key`
+- `api.base_url`
+- `api.model`
+- `whisper.runtime`
+- `target_language`
+- `tts_method`
+
+#### 第二类：强烈建议确认的开关
+
+- `whisper.language`
+- `demucs`
+- `burn_subtitles`
+- `max_workers`
+- `api.llm_support_json`
+
+#### 第三类：进阶优化项，先不动也能用
+
+- `subtitle.max_length`
+- `summary_length`
+- `max_split_length`
+- `reflect_translate`
+- `speed_factor`
+- `ffmpeg_gpu`
+
+### 推荐的首次配置顺序
+
+#### 第 1 步：设置界面语言
+
+先确认：
+
+```yaml
+display_language: 'zh-CN'
+```
+
+这只影响界面显示语言，不影响翻译结果。
+
+#### 第 2 步：先把 LLM 配通
+
+左侧边栏的 **LLM Configuration** 是最优先要配置的区域。
+
+至少要填这 4 项：
+
+```yaml
+api:
+  key: 'your-api-key'
+  base_url: 'https://your-openai-compatible-host'
+  model: 'your-model-name'
+  llm_support_json: false
+```
+
+配置原则：
+
+- `key`：你的 API 密钥
+- `base_url`：只填服务根地址，不要手动补 `/v1/chat/completions`
+- `model`：填服务商实际提供的模型名
+- `llm_support_json`：只有模型明确支持 JSON 输出时再开
+
+建议你在页面里填完后，点击模型右侧的校验按钮，先确认 API 能正常返回。
+
+#### 第 3 步：确认字幕语言方向
+
+在 **Subtitles Settings** 中先确认：
+
+```yaml
+whisper:
+  language: 'en'
+
+target_language: '简体中文'
+```
+
+含义是：
+
+- `whisper.language`：原视频的语音语言
+- `target_language`：最终要翻译成什么语言
+
+如果源语言填错，后面整条链路都会变差，包括识别、断句、翻译和配音。
+
+#### 第 4 步：选 Whisper 运行方式
+
+这是最关键的运行模式选择：
+
+```yaml
+whisper:
+  runtime: 'local'
+```
+
+三种模式的选择建议：
+
+| 模式 | 适合谁 | 说明 |
+| ---- | ---- | ---- |
+| `local` | 本机算力够、希望降低成本 | 本地跑 WhisperX，最省钱，但吃算力和内存 |
+| `cloud` | 希望更稳定省事 | 使用 302.ai 的 WhisperX 接口 |
+| `elevenlabs` | 已有 ElevenLabs 能力 | 实验性方案，按量计费 |
+
+补充说明：
+
+- `local` 不要求你额外填写云端密钥，但本地性能不足时会明显变慢
+- `cloud` 需要填写 `whisper.whisperX_302_api_key`
+- `elevenlabs` 需要填写 `whisper.elevenlabs_api_key`
+
+#### 第 5 步：选 TTS 引擎
+
+在 **Dubbing Settings** 中先选一条最适合你的路线。
+
+最常见的 3 种选择：
+
+| 目标 | 推荐配置 | 原因 |
+| ---- | ---- | ---- |
+| 先跑通、尽量省钱 | `edge_tts` | 免费、配置最少 |
+| 追求稳定、音色通用 | `azure_tts` | 易用、效果稳 |
+| 想做角色复刻/参考音频配音 | `sf_fish_tts` / `fish_tts` / `gpt_sovits` | 支持参考音频或角色音色 |
+
+如果你只是想先确认整条流程能跑通，建议第一轮直接使用：
+
+```yaml
+tts_method: 'edge_tts'
+```
+
+这样可以把问题先收敛到“识别 + 翻译 + 合成链路是否正常”，避免一开始就被多套付费 TTS 参数干扰。
+
+#### 第 6 步：最后再决定要不要开增强项
+
+两个最常用的增强开关：
+
+```yaml
+demucs: true
+burn_subtitles: true
+```
+
+- `demucs`：视频背景音乐大、旁白被盖住时建议开启
+- `burn_subtitles`：需要直接输出带硬字幕的视频时开启
+
+如果你只想先验证流程，`demucs` 可以先关，速度会更快。
+
+## 推荐的 4 套实战配置
+
+下面不是“所有参数模板”，而是最容易真正用起来的 4 种配置方案。
+
+### 方案 1：最稳的首次跑通方案
+
+适合：第一次使用，先验证流程。
+
+```yaml
+api:
+  key: 'your-api-key'
+  base_url: 'https://your-openai-compatible-host'
+  model: 'your-model-name'
+  llm_support_json: false
+
+whisper:
+  runtime: 'local'
+  language: 'en'
+
+target_language: '简体中文'
+
+tts_method: 'edge_tts'
+
+demucs: false
+burn_subtitles: true
+max_workers: 2
+```
+
+特点：
+
+- 配置最少
+- 成本最低
+- 便于快速定位问题
+
+### 方案 2：识别本地，翻译云端，配音免费
+
+适合：本地能跑 WhisperX，但不想为 TTS 付费。
+
+```yaml
+api:
+  key: 'your-api-key'
+  base_url: 'https://your-openai-compatible-host'
+  model: 'your-model-name'
+  llm_support_json: true
+
+whisper:
+  runtime: 'local'
+  language: 'en'
+
+target_language: '简体中文'
+
+tts_method: 'edge_tts'
+
+demucs: true
+burn_subtitles: true
+max_workers: 4
+```
+
+特点：
+
+- 核心成本集中在 LLM
+- 配音免费
+- 适合大部分普通视频翻译场景
+
+### 方案 3：云端识别 + 云端翻译 + Azure 配音
+
+适合：希望成功率更高、体验更省心。
+
+```yaml
+api:
+  key: 'your-api-key'
+  base_url: 'https://your-openai-compatible-host'
+  model: 'your-model-name'
+  llm_support_json: true
+
+whisper:
+  runtime: 'cloud'
+  language: 'en'
+  whisperX_302_api_key: 'your-302-api-key'
+
+target_language: '简体中文'
+
+tts_method: 'azure_tts'
+
+azure_tts:
+  api_key: 'your-302-api-key'
+  voice: 'zh-CN-YunfengNeural'
+```
+
+特点：
+
+- 依赖本地算力更少
+- 适合批量处理或长期使用
+- 费用高于本地方案
+
+### 方案 4：需要参考音频/角色感的配音方案
+
+适合：想要更像“原角色口型和人设”的配音效果。
+
+```yaml
+tts_method: 'sf_fish_tts'
+
+sf_fish_tts:
+  api_key: 'your-siliconflow-key'
+  mode: 'preset'
+  voice: 'anna'
+```
+
+如果后续你要做自定义音色，再切换到：
+
+- `mode: custom`
+- `mode: dynamic`
+
+建议：先把整条流程跑通，再升级到参考音频模式。
+
+## 页面配置和 config.yaml 的关系
+
+很多用户会混淆“页面改”和“文件改”的区别。实际规则很简单：
+
+- 日常使用时，优先在 Streamlit 左侧边栏修改
+- 页面里改动后，会自动写回 `config.yaml`
+- 只有高级参数才建议手动编辑 `config.yaml`
+
+### 页面里能直接改的内容
+
+主要包括：
+
+- 显示语言
+- LLM 配置
+- 源语言与目标语言
+- Whisper 运行模式
+- Demucs 开关
+- 烧录字幕开关
+- TTS 方法及其常用参数
+
+### 更适合手动编辑的内容
+
+主要包括：
+
+- `subtitle.max_length`
+- `subtitle.target_multiplier`
+- `summary_length`
+- `max_split_length`
+- `reflect_translate`
+- `speed_factor`
+- `ffmpeg_gpu`
+- `model_dir`
+
+经验上，先把页面中可见配置调通，再动这些高级参数，效率最高。
+
+## 最容易配错的地方
+
+### 1. `api.base_url` 填成了完整接口地址
+
+错误思路：
+
+- 填成 `/v1/chat/completions`
+- 填成某个具体模型的调用路径
+
+正确思路：
+
+- 只填 API 服务的基础地址
+- 保持 OpenAI 兼容格式
+
+如果你的服务商文档写的是 OpenAI-compatible，一般就按基础地址填写。
+
+### 2. `api.base_url` 末尾有空格
+
+这是非常隐蔽但很常见的问题。复制网址时如果多带了前后空格，接口校验可能失败。
+
+建议：
+
+- 手动删除前后空格
+- 尽量通过页面重新输入，不要整段粘贴后不检查
+
+### 3. `llm_support_json` 开错
+
+这个开关不是“建议默认开启”，而是“模型明确支持时再开启”。
+
+现象通常是：
+
+- API 能返回，但流程里 JSON 解析失败
+- 提示格式错误或关键字段缺失
+
+拿不准时，先设为：
+
+```yaml
+llm_support_json: false
+```
+
+### 4. `whisper.language` 填错
+
+这里填的是原视频语言，不是目标翻译语言。
+
+例如：
+
+- 英文视频翻成中文：`whisper.language: 'en'`
+- 日文视频翻成中文：`whisper.language: 'ja'`
+
+### 5. 一开始就开太多增强功能
+
+比如同时启用：
+
+- `demucs: true`
+- 高质量云端 TTS
+- `reflect_translate: true`
+- 较高 `max_workers`
+
+这样一旦出问题，很难判断到底是哪一层出了问题。
+
+更合理的方式是：
+
+1. 先用最小配置跑通
+2. 再开 Demucs
+3. 再升级 TTS
+4. 最后再调翻译质量参数
+
+## 推荐排障顺序
+
+当你遇到“能启动，但处理失败”时，按这个顺序排查最快。
+
+### 第 1 层：先检查 LLM 是否可用
+
+检查点：
+
+- `api.key` 是否有效
+- `api.base_url` 是否正确
+- `api.model` 是否存在
+- 页面校验按钮是否通过
+
+### 第 2 层：再检查 Whisper 路线
+
+如果是本地：
+
+- 本机算力是否足够
+- 本地模型是否已正常下载
+- `whisper.language` 是否正确
+
+如果是云端：
+
+- `whisper.whisperX_302_api_key` 是否可用
+- `whisper.runtime` 是否确实切到 `cloud`
+
+### 第 3 层：最后检查 TTS
+
+检查点：
+
+- `tts_method` 选的是什么
+- 对应 TTS 的 API key 是否已填
+- 语音名或角色名是否存在
+
+如果你不确定问题是否来自配音，先切回：
+
+```yaml
+tts_method: 'edge_tts'
+```
+
+这样最容易验证是不是某个付费 TTS 配置本身出了问题。
+
+## 我该优先改哪些参数
+
+如果你不想研究太多，日常最常改的其实只有下面这些：
+
+```yaml
+api.key
+api.base_url
+api.model
+api.llm_support_json
+whisper.language
+whisper.runtime
+target_language
+demucs
+burn_subtitles
+tts_method
+```
+
+把这 10 个参数理解透，大多数场景就已经够用了。
 
 ## 基础配置
 

@@ -11,7 +11,7 @@ display_language: "zh-CN"
 
 # API settings
 api:
-  key: ''
+  key: '''
   base_url: 'https://api.minimaxi.com'
   model: 'MiniMax-M2.5'
   llm_support_json: true
