@@ -111,6 +111,12 @@ python install.py
 streamlit run st.py
 ```
 
+### Configuration
+
+- Copy `.env.example` to `.env` and put only sensitive API keys in `.env`.
+- Keep all non-sensitive runtime settings in `config.yaml`, including model selection, target language, Whisper runtime, subtitle options, and TTS method.
+- Streamlit sidebar changes are designed to persist in `config.yaml`, while secret fields are written back to `.env`.
+
 ### Docker
 Alternatively, you can use Docker (requires CUDA 12.4 and NVIDIA Driver version >550), see [Docker docs](/docs/pages/docs/docker.en-US.md):
 

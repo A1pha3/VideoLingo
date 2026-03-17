@@ -113,6 +113,12 @@ python install.py
 streamlit run st.py
 ```
 
+### 配置说明
+
+- 先复制 `.env.example` 为 `.env`，并且只在 `.env` 中保存敏感的 API Key。
+- 其它非敏感运行配置统一放在 `config.yaml`，包括模型选择、目标语言、Whisper 运行模式、字幕参数和 TTS 方法。
+- Streamlit 侧边栏对普通配置的修改会持久化到 `config.yaml`，密钥类字段则会写回 `.env`。
+
 ### Docker
 还可以选择使用 Docker（要求 CUDA 12.4 和 NVIDIA Driver 版本 >550），详见[Docker文档](/docs/pages/docs/docker.zh-CN.md)：
 
