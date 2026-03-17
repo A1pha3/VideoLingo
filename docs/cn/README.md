@@ -13,6 +13,7 @@
 |------|------|--------------|
 | [快速开始](quick-start.md) | 5 分钟上手，体验完整翻译流程 | 5 分钟 |
 | [安装指南](installation.md) | 详细安装步骤，包含依赖说明 | 10 分钟 |
+| [项目内 Conda 前缀环境](project-conda-prefix-env.md) | 把环境和缓存放到项目目录，减少系统盘占用 | 8 分钟 |
 | [配置说明](configuration.md) | config.yaml 完整配置项说明 | 15 分钟 |
 
 ### 核心概念
@@ -74,7 +75,7 @@
 适合只需要使用 VideoLingo 进行视频翻译的用户。
 
 ```
-快速开始 → 安装指南 → 配置说明 → 故障排除
+快速开始 → 安装指南 → 项目内 Conda 前缀环境（可选）→ 配置说明 → 故障排除
 ```
 
 ### 路径二：开发者
@@ -117,7 +118,11 @@ TTS 引擎：  Azure/OpenAI/GPT-SoVITS/Fish/Edge-TTS
 ## 快速命令
 
 ```bash
-# 安装
+# 默认安装
+python install.py
+
+# 如果你使用项目内 Conda 前缀环境
+source scripts/activate_project_conda_env.zsh
 python install.py
 
 # 启动 Web UI

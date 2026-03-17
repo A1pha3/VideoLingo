@@ -2,12 +2,42 @@
 
 > 详细安装说明，包含各种系统配置和依赖管理
 
+## 推荐命令速查
+
+如果你准备使用项目内 Conda 前缀环境，并把缓存尽量放到项目目录，可以直接按下面执行：
+
+### 第一次使用
+
+```bash
+cd /path/to/VideoLingo
+source scripts/setup_project_conda_env.zsh
+python install.py
+```
+
+### 以后每天使用
+
+```bash
+cd /path/to/VideoLingo
+source scripts/activate_project_conda_env.zsh
+```
+
+### 启动项目
+
+```bash
+streamlit run st.py
+```
+
+> ⚠️ 注意：这里必须使用 `source`，不要直接执行脚本文件。
+
 ## 学习目标
 
 完成本教程后，你将能够：
+
 - 在各种操作系统上安装 VideoLingo
 - 理解各个依赖的作用
 - 解决常见的安装问题
+
+> 📖 如果你希望把 Conda 环境、pip 缓存和 Hugging Face 模型缓存都放到项目目录，而不是默认写入系统盘，请先阅读 [项目内 Conda 前缀环境使用说明](./project-conda-prefix-env.md)。
 
 ## 系统要求
 
