@@ -56,10 +56,16 @@ def _parse_bool(value: Any) -> bool:
 def _parse_int(value: Any) -> int:
     if isinstance(value, int):
         return value
-    return int(value)
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        raise ValueError(f"Cannot convert '{value}' to int")
 
 
 def _convert_env_value(env_key: str, value: str) -> Any:
+    if not value:
+        return value
+
     bool_envs = (
         "MINIMAX_LLM_SUPPORT_JSON",
         "DEMUCS_ENABLED",
@@ -102,8 +108,15 @@ def load_key(key: str) -> Any:
 
     with lock:
         if _cached_config is None:
-            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-                _cached_config = yaml.load(f)
+            try:
+                with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                    _cached_config = yaml.load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(
+                    f"Config file '{CONFIG_PATH}' not found. "
+                    "Please copy .env.example to .env and configure "
+                    "your API keys."
+                )
 
     keys = key.split(".")
     value = _cached_config

@@ -86,7 +86,9 @@ fi
 
 if (( LOG_TO_FILE )); then
 	mkdir -p "${LOG_FILE:h}"
-	exec > >(tee -a "$LOG_FILE") 2>&1
+	exec > >(python "$PROJECT_ROOT/scripts/redact_streamlit_output.py" | tee -a "$LOG_FILE") 2>&1
+else
+	exec > >(python "$PROJECT_ROOT/scripts/redact_streamlit_output.py") 2>&1
 fi
 
 echo "启动 Streamlit: port=$PORT log_level=$LOG_LEVEL"

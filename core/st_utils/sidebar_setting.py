@@ -3,10 +3,42 @@ from translations.translations import translate as t
 from translations.translations import DISPLAY_LANGUAGES
 from core.utils import *
 
-def config_input(label, key, help=None):
+def mask_secret(value):
+    if not value:
+        return ""
+    if len(value) <= 8:
+        return "*" * len(value)
+    return f"{value[:4]}{'*' * (len(value) - 8)}{value[-4:]}"
+
+
+def config_input(label, key, help=None, secret=False):
     """Generic config input handler"""
-    val = st.text_input(label, value=load_key(key), help=help)
-    if val != load_key(key):
+    current_value = load_key(key)
+
+    if secret:
+        session_key = f"__masked_input__{key}"
+        if session_key not in st.session_state:
+            st.session_state[session_key] = ""
+
+        secret_help = help or ""
+        if current_value:
+            suffix = t("Leave blank to keep current value")
+            secret_help = f"{secret_help} {suffix}".strip()
+
+        val = st.text_input(
+            label,
+            value=st.session_state[session_key],
+            help=secret_help,
+            type="password",
+            placeholder=mask_secret(current_value),
+        )
+        if val and val != current_value:
+            update_key(key, val)
+            st.session_state[session_key] = ""
+        return current_value
+
+    val = st.text_input(label, value=current_value, help=help)
+    if val != current_value:
         update_key(key, val)
     return val
 
@@ -23,7 +55,7 @@ def page_setting():
     #     config_input(t("Cookies Path"), "youtube.cookies_path")
 
     with st.expander(t("LLM Configuration"), expanded=True):
-        config_input(t("API_KEY"), "api.key")
+        config_input(t("API_KEY"), "api.key", secret=True)
         config_input(t("BASE_URL"), "api.base_url", help=t("Openai format, will add /v1/chat/completions automatically"))
         
         c1, c2 = st.columns([4, 1])
@@ -64,9 +96,9 @@ def page_setting():
             update_key("whisper.runtime", runtime)
             st.rerun()
         if runtime == "cloud":
-            config_input(t("WhisperX 302ai API"), "whisper.whisperX_302_api_key")
+            config_input(t("WhisperX 302ai API"), "whisper.whisperX_302_api_key", secret=True)
         if runtime == "elevenlabs":
-            config_input(("ElevenLabs API"), "whisper.elevenlabs_api_key")
+            config_input(("ElevenLabs API"), "whisper.elevenlabs_api_key", secret=True)
 
         with c2:
             target_language = st.text_input(t("Target Lang"), value=load_key("target_language"), help=t("Input any language in natural language, as long as llm can understand"))
@@ -92,7 +124,7 @@ def page_setting():
 
         # sub settings for each tts method
         if select_tts == "sf_fish_tts":
-            config_input(t("SiliconFlow API Key"), "sf_fish_tts.api_key")
+            config_input(t("SiliconFlow API Key"), "sf_fish_tts.api_key", secret=True)
             
             # Add mode selection dropdown
             mode_options = {
@@ -113,18 +145,18 @@ def page_setting():
                 config_input("Voice", "sf_fish_tts.voice")
 
         elif select_tts == "openai_tts":
-            config_input("302ai API", "openai_tts.api_key")
+            config_input("302ai API", "openai_tts.api_key", secret=True)
             config_input(t("OpenAI Voice"), "openai_tts.voice")
 
         elif select_tts == "fish_tts":
-            config_input("302ai API", "fish_tts.api_key")
+            config_input("302ai API", "fish_tts.api_key", secret=True)
             fish_tts_character = st.selectbox(t("Fish TTS Character"), options=list(load_key("fish_tts.character_id_dict").keys()), index=list(load_key("fish_tts.character_id_dict").keys()).index(load_key("fish_tts.character")))
             if fish_tts_character != load_key("fish_tts.character"):
                 update_key("fish_tts.character", fish_tts_character)
                 st.rerun()
 
         elif select_tts == "azure_tts":
-            config_input("302ai API", "azure_tts.api_key")
+            config_input("302ai API", "azure_tts.api_key", secret=True)
             config_input(t("Azure Voice"), "azure_tts.voice")
         
         elif select_tts == "gpt_sovits":
@@ -147,10 +179,10 @@ def page_setting():
             config_input(t("Edge TTS Voice"), "edge_tts.voice")
 
         elif select_tts == "sf_cosyvoice2":
-            config_input(t("SiliconFlow API Key"), "sf_cosyvoice2.api_key")
+            config_input(t("SiliconFlow API Key"), "sf_cosyvoice2.api_key", secret=True)
         
         elif select_tts == "f5tts":
-            config_input("302ai API", "f5tts.302_api")
+            config_input("302ai API", "f5tts.302_api", secret=True)
         
 def check_api():
     try:
