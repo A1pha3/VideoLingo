@@ -62,14 +62,11 @@ Streamlit 运行时（Tornado 服务器）
 # 进入项目目录
 cd VideoLingo
 
-# 激活虚拟环境（如果使用 conda）
+# 激活 Conda 环境
 conda activate videolingo
-
-# 或使用 uv
-uv venv
-source .venv/bin/activate  # Linux/Mac
-# 或 .venv\Scripts\activate  # Windows
 ```
+
+> 💡 **关于项目内 Conda 前缀环境**：如果你希望把 Conda 环境、pip 缓存和 Hugging Face 模型缓存都放到项目目录，请参考 [项目内 Conda 前缀环境使用说明](./project-conda-prefix-env.md)。
 
 ### 2.2 启动 Web 界面
 
@@ -399,7 +396,7 @@ def text_processing_section():
         if not os.path.exists(SUB_VIDEO):
             if st.button(t("Start Processing Subtitles")):
                 process_text()
-                st.rerun()  # 重新运行脚本刷新界面
+                st.rerun()  # 重新运行脚本刷新界面（Streamlit 1.27+）
         else:
             st.video(SUB_VIDEO)
             download_subtitle_zip_button(text=t("Download All Srt Files"))
@@ -550,12 +547,13 @@ st.write(f"计数：{st.session_state.counter}")
 # 修改状态
 if st.button("增加"):
     st.session_state.counter += 1
-    st.rerun()  # 重新运行以更新界面
+    st.rerun()  # 重新运行以更新界面（Streamlit 1.27+）
 
-# 文本输入绑定到状态
-st.session_state.user_name = st.text_input(
+# 文本输入（使用 key 参数自动绑定到 session_state）
+user_name = st.text_input(
     "用户名",
-    value=st.session_state.user_name
+    value=st.session_state.user_name,
+    key="user_name_input"
 )
 ```
 
@@ -818,7 +816,7 @@ if "key" not in st.session_state:  # ✅ 先检查是否存在
 # 清除缓存按钮
 if st.button("清除缓存"):
     st.cache_data.clear()
-    st.rerun()
+    st.rerun()  # Streamlit 1.27+，旧版本使用 st.experimental_rerun()
 ```
 
 **问题 4**：CSS 不生效
@@ -885,7 +883,12 @@ CMD ["streamlit", "run", "st.py", "--server.port=8501", "--server.address=0.0.0.
 ```bash
 # 构建和运行
 docker build -t videolingo .
+
+# CPU 模式运行
 docker run -p 8501:8501 videolingo
+
+# GPU 模式运行（推荐，VideoLingo 需要 GPU 加速）
+docker run -p 8501:8501 --gpus all videolingo
 ```
 
 ### 9.3 反向代理配置（Nginx）

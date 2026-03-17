@@ -11,10 +11,10 @@ display_language: "zh-CN"
 
 # API settings
 api:
-  key: 'your-api-key'
-  base_url: 'https://yunwu.ai'
-  model: 'gpt-4.1-2025-04-14'
-  llm_support_json: false
+  key: 'sk-cp-wBawqDzlTDOF5aTvxtR2QYt-WwfFKrMX3RmHNBgX_n_gTEmCsexB0DZA6Ub_FDw5UHpSZ1YCN2AfIOryG4W2sLLkQg6Ri1tp2u8jm6wKV3gDtNhttpPWc3E'
+  base_url: 'https://platform.minimaxi.com/ '
+  model: 'MiniMax-M2.5'
+  llm_support_json: true
 # *Number of LLM multi-threaded accesses, set to 1 if using local LLM
 max_workers: 4
 
