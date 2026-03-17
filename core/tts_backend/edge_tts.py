@@ -1,29 +1,77 @@
+import asyncio
 from pathlib import Path
-import edge_tts
-from core.utils import *
-import subprocess
 
-# Available voices can be listed using edge-tts --list-voices command
-# Common English voices:
-# en-US-JennyNeural - Female
-# en-US-GuyNeural - Male  
-# en-GB-SoniaNeural - Female British
-# Common Chinese voices:
-# zh-CN-XiaoxiaoNeural - Female
-# zh-CN-YunxiNeural - Male
-# zh-CN-XiaoyiNeural - Female
-def edge_tts(text, save_path):
-    # Load settings from config file
+import edge_tts as edge_tts_lib
+from pydub import AudioSegment
+
+from core.utils import *
+
+# Available voices can be listed using: edge-tts --list-voices
+VOICE_ALIASES = {
+    "jenny": "en-US-JennyNeural",
+    "guy": "en-US-GuyNeural",
+    "sonia": "en-GB-SoniaNeural",
+    "xiaoxiao": "zh-CN-XiaoxiaoNeural",
+    "yunxi": "zh-CN-YunxiNeural",
+    "xiaoyi": "zh-CN-XiaoyiNeural",
+    "nanami": "ja-JP-NanamiNeural",
+    "keita": "ja-JP-KeitaNeural",
+}
+
+
+def _default_voice_for_target_language() -> str:
+    try:
+        target_language = str(load_key("target_language")).lower()
+    except Exception:
+        return "en-US-JennyNeural"
+
+    if any(keyword in target_language for keyword in ("中文", "chinese", "mandarin", "简体", "繁體", "繁体")):
+        return "zh-CN-XiaoxiaoNeural"
+    if any(keyword in target_language for keyword in ("english", "英语", "英文")):
+        return "en-US-JennyNeural"
+    if any(keyword in target_language for keyword in ("日本", "japanese", "日语", "日文")):
+        return "ja-JP-NanamiNeural"
+    if any(keyword in target_language for keyword in ("한국", "korean", "韩语", "韓語")):
+        return "ko-KR-SunHiNeural"
+    return "en-US-JennyNeural"
+
+
+def _resolve_voice() -> str:
     edge_set = load_key("edge_tts")
-    voice = edge_set.get("voice", "en-US-JennyNeural")
-    
-    # Create output directory if it doesn't exist
+    configured_voice = str(edge_set.get("voice", "") or "").strip()
+    if not configured_voice:
+        return _default_voice_for_target_language()
+
+    return VOICE_ALIASES.get(configured_voice.lower(), configured_voice)
+
+
+async def _save_edge_audio(text: str, save_path: Path, voice: str) -> None:
+    temp_audio_path = save_path.with_suffix(".edge_tmp.mp3")
+    communicate = edge_tts_lib.Communicate(text=text, voice=voice)
+    try:
+        await communicate.save(str(temp_audio_path))
+        if save_path.suffix.lower() == ".wav":
+            audio = AudioSegment.from_file(temp_audio_path)
+            audio.export(
+                save_path,
+                format="wav",
+                parameters=["-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1"],
+            )
+        else:
+            temp_audio_path.replace(save_path)
+    finally:
+        if temp_audio_path.exists():
+            temp_audio_path.unlink()
+
+
+def edge_tts(text, save_path):
+    voice = _resolve_voice()
+
     speech_file_path = Path(save_path)
     speech_file_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    cmd = ["edge-tts", "--voice", voice, "--text", text, "--write-media", str(speech_file_path)]
-    subprocess.run(cmd, check=True)
-    print(f"Audio saved to {speech_file_path}")
+
+    asyncio.run(_save_edge_audio(text=text, save_path=speech_file_path, voice=voice))
+    print(f"Audio saved to {speech_file_path} with voice {voice}")
 
 if __name__ == "__main__":
     edge_tts("Today is a good day!", "edge_tts.wav")
