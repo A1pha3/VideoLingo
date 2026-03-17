@@ -2,6 +2,7 @@ import os
 import time
 import shutil
 import subprocess
+import ast
 from typing import Tuple
 
 import pandas as pd
@@ -20,6 +21,34 @@ console = Console()
 TEMP_FILE_TEMPLATE = f"{_AUDIO_TMP_DIR}/{{}}_temp.wav"
 OUTPUT_FILE_TEMPLATE = f"{_AUDIO_SEGS_DIR}/{{}}.wav"
 WARMUP_SIZE = 5
+
+
+class _NumpyEvalProxy:
+    float16 = staticmethod(float)
+    float32 = staticmethod(float)
+    float64 = staticmethod(float)
+    int8 = staticmethod(int)
+    int16 = staticmethod(int)
+    int32 = staticmethod(int)
+    int64 = staticmethod(int)
+    nan = float("nan")
+
+
+def parse_serialized_cell(value, *, allow_numpy: bool = False):
+    if not isinstance(value, str):
+        return value
+
+    try:
+        return ast.literal_eval(value)
+    except (SyntaxError, ValueError):
+        if allow_numpy:
+            return eval(value, {"__builtins__": {}}, {"np": _NumpyEvalProxy()})
+        raise
+
+
+def parse_lines_cell(value):
+    parsed = parse_serialized_cell(value)
+    return parsed if isinstance(parsed, list) else [parsed]
 
 def parse_df_srt_time(time_str: str) -> float:
     """Convert SRT time format to seconds"""
@@ -65,7 +94,7 @@ def adjust_audio_speed(input_file: str, output_file: str, speed_factor: float) -
 def process_row(row: pd.Series, tasks_df: pd.DataFrame) -> Tuple[int, float]:
     """Helper function for processing single row data"""
     number = row['number']
-    lines = eval(row['lines']) if isinstance(row['lines'], str) else row['lines']
+    lines = parse_lines_cell(row['lines'])
     real_dur = 0
     for line_index, line in enumerate(lines):
         temp_file = TEMP_FILE_TEMPLATE.format(f"{number}_{line_index}")
@@ -162,14 +191,16 @@ def merge_chunks(tasks_df: pd.DataFrame) -> pd.DataFrame:
                     cur_time += chunk_df.iloc[i-1]['gap']/speed_factor
                 new_sub_times = []
                 number = row['number']
-                lines = eval(row['lines']) if isinstance(row['lines'], str) else row['lines']
+                lines = parse_lines_cell(row['lines'])
                 for line_index, line in enumerate(lines):
                     # 🔄 Step2: Start speed change and save as OUTPUT_FILE_TEMPLATE
                     temp_file = TEMP_FILE_TEMPLATE.format(f"{number}_{line_index}")
                     output_file = OUTPUT_FILE_TEMPLATE.format(f"{number}_{line_index}")
                     adjust_audio_speed(temp_file, output_file, speed_factor)
                     ad_dur = get_audio_duration(output_file)
-                    new_sub_times.append([cur_time, cur_time+ad_dur])
+                    start_time = float(cur_time)
+                    end_time = float(cur_time + ad_dur)
+                    new_sub_times.append([start_time, end_time])
                     cur_time += ad_dur
                 # 🔄 Step3: Find corresponding main DataFrame index and update new_sub_times
                 main_df_idx = tasks_df[tasks_df['number'] == row['number']].index[0]
@@ -184,7 +215,7 @@ def merge_chunks(tasks_df: pd.DataFrame) -> pd.DataFrame:
                     rprint(f"[yellow]⚠️ Chunk {chunk_start} to {index} exceeds by {time_diff:.3f}s, truncating last audio[/yellow]")
                     # Get the last audio file
                     last_number = tasks_df.iloc[index]['number']
-                    last_lines = eval(tasks_df.iloc[index]['lines']) if isinstance(tasks_df.iloc[index]['lines'], str) else tasks_df.iloc[index]['lines']
+                    last_lines = parse_lines_cell(tasks_df.iloc[index]['lines'])
                     last_line_index = len(last_lines) - 1
                     last_file = OUTPUT_FILE_TEMPLATE.format(f"{last_number}_{last_line_index}")
                     

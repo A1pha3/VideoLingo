@@ -106,5 +106,6 @@
     "No NVIDIA GPU detected": "GPU NVIDIA не обнаружен",
     "No NVIDIA GPU detected or NVIDIA drivers not properly installed": "GPU NVIDIA не обнаружен или драйверы NVIDIA установлены неправильно",
     "LLM JSON Format Support": "Поддержка формата JSON для LLM",
-    "Enable if your LLM supports JSON mode output": "Включите, если ваш LLM поддерживает вывод в формате JSON"
+    "Enable if your LLM supports JSON mode output": "Включите, если ваш LLM поддерживает вывод в формате JSON",
+    "Leave blank to keep current value": "Оставьте пустым, чтобы сохранить текущее значение"
 }

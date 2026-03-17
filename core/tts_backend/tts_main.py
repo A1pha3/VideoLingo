@@ -40,6 +40,7 @@ def tts_main(text, save_as, number, task_df):
     TTS_METHOD = load_key("tts_method")
     
     max_retries = 3
+    last_error = None
     for attempt in range(max_retries):
         try:
             if attempt >= max_retries - 1:
@@ -72,14 +73,14 @@ def tts_main(text, save_as, number, task_df):
             else:
                 if os.path.exists(save_as):
                     os.remove(save_as)
+                last_error = RuntimeError(f"Generated audio duration is 0 for text: {text}")
                 if attempt == max_retries - 1:
-                    print(f"Warning: Generated audio duration is 0 for text: {text}")
-                    # Create silent audio file
-                    silence = AudioSegment.silent(duration=100)  # 100ms silence
-                    silence.export(save_as, format="wav")
-                    return
+                    raise last_error
                 print(f"Attempt {attempt + 1} failed, retrying...")
         except Exception as e:
+            last_error = e
+            if os.path.exists(save_as):
+                os.remove(save_as)
             if attempt == max_retries - 1:
-                raise Exception(f"Failed to generate audio after {max_retries} attempts: {str(e)}")
+                raise Exception(f"Failed to generate audio after {max_retries} attempts: {str(last_error)}")
             print(f"Attempt {attempt + 1} failed, retrying...")

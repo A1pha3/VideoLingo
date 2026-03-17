@@ -117,10 +117,20 @@ def page_setting():
             st.rerun()
     with st.expander(t("Dubbing Settings"), expanded=True):
         tts_methods = ["azure_tts", "openai_tts", "fish_tts", "sf_fish_tts", "edge_tts", "gpt_sovits", "custom_tts", "sf_cosyvoice2", "f5tts"]
-        select_tts = st.selectbox(t("TTS Method"), options=tts_methods, index=tts_methods.index(load_key("tts_method")))
-        if select_tts != load_key("tts_method"):
+        env_tts_override = get_env_override("tts_method")
+        if env_tts_override:
+            st.warning(f"TTS_METHOD is set via .env ({env_tts_override}). Sidebar changes will not take effect until that override is removed.")
+
+        current_tts_method = load_key("tts_method")
+        select_tts = st.selectbox(
+            t("TTS Method"),
+            options=tts_methods,
+            index=tts_methods.index(current_tts_method),
+            disabled=bool(env_tts_override),
+            key="tts_method_select",
+        )
+        if not env_tts_override and select_tts != current_tts_method:
             update_key("tts_method", select_tts)
-            st.rerun()
 
         # sub settings for each tts method
         if select_tts == "sf_fish_tts":

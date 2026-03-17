@@ -16,6 +16,19 @@ def azure_tts(text: str, save_path: str) -> None:
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
+    if not response.ok:
+        error_text = response.text.strip().replace("\n", " ")[:300]
+        raise RuntimeError(f"Azure TTS request failed: HTTP {response.status_code}, body={error_text}")
+
+    content_type = response.headers.get("Content-Type", "")
+    if not content_type.startswith(("audio/", "application/octet-stream")):
+        error_text = response.text.strip().replace("\n", " ")[:300]
+        raise RuntimeError(f"Azure TTS returned non-audio content: Content-Type={content_type}, body={error_text}")
+
+    if not response.content.startswith((b'RIFF', b'ID3')):
+        snippet = response.content[:80]
+        raise RuntimeError(f"Azure TTS returned unexpected audio header: {snippet!r}")
+
     with open(save_path, 'wb') as f:
         f.write(response.content)
     print(f"Audio saved to {save_path}")

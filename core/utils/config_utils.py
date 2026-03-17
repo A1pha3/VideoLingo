@@ -2,6 +2,7 @@ from ruamel.yaml import YAML
 import threading
 import os
 from typing import Any, Optional
+from pathlib import Path
 
 CONFIG_PATH = "config.yaml"
 lock = threading.Lock()
@@ -95,10 +96,49 @@ def _convert_env_value(env_key: str, value: str) -> Any:
 # -----------------------
 
 _cached_config: Optional[dict] = None
+_dotenv_loaded = False
+
+
+def _parse_dotenv_line(line: str) -> Optional[tuple[str, str]]:
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#") or "=" not in stripped:
+        return None
+
+    key, value = stripped.split("=", 1)
+    key = key.strip()
+    value = value.strip()
+
+    if not key:
+        return None
+
+    if value and value[0] == value[-1] and value[0] in {'"', "'"}:
+        value = value[1:-1]
+
+    return key, value
+
+
+def _ensure_dotenv_loaded() -> None:
+    global _dotenv_loaded
+
+    if _dotenv_loaded:
+        return
+
+    dotenv_path = Path(CONFIG_PATH).resolve().with_name(".env")
+    if dotenv_path.exists():
+        for line in dotenv_path.read_text(encoding="utf-8").splitlines():
+            parsed = _parse_dotenv_line(line)
+            if not parsed:
+                continue
+            key, value = parsed
+            os.environ.setdefault(key, value)
+
+    _dotenv_loaded = True
 
 
 def load_key(key: str) -> Any:
     global _cached_config
+
+    _ensure_dotenv_loaded()
 
     if key in ENV_KEY_MAP:
         env_var = ENV_KEY_MAP[key]
@@ -126,6 +166,16 @@ def load_key(key: str) -> Any:
         else:
             raise KeyError(f"Key '{key}' not found in configuration")
     return value
+
+
+def get_env_override(key: str) -> Optional[str]:
+    _ensure_dotenv_loaded()
+
+    env_var = ENV_KEY_MAP.get(key)
+    if not env_var:
+        return None
+
+    return os.environ.get(env_var)
 
 
 def update_key(key: str, new_value: Any) -> bool:

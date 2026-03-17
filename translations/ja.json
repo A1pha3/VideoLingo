@@ -106,5 +106,6 @@
     "No NVIDIA GPU detected": "NVIDIA GPUが検出されません",
     "No NVIDIA GPU detected or NVIDIA drivers not properly installed": "NVIDIA GPUが検出されないか、NVIDIAドライバーが正しくインストールされていません",
     "LLM JSON Format Support": "LLM JSON形式サポート",
-    "Enable if your LLM supports JSON mode output": "LLMがJSON出力モードをサポートしている場合に有効化"
+    "Enable if your LLM supports JSON mode output": "LLMがJSON出力モードをサポートしている場合に有効化",
+    "Leave blank to keep current value": "現在の値を保持するには空欄のままにしてください"
 }
