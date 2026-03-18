@@ -14,6 +14,41 @@ from core.utils.decorator import except_handler
 LOCK = Lock()
 GPT_LOG_FOLDER = 'output/gpt_log'
 
+
+def _normalize_json_response(resp):
+    if isinstance(resp, list):
+        dict_items = [item for item in resp if isinstance(item, dict)]
+        if len(resp) == 1 and dict_items:
+            return dict_items[0]
+        if len(dict_items) == 1:
+            return dict_items[0]
+    return resp
+
+
+def _validate_response(model, prompt, resp_content, resp_type, resp, valid_def):
+    if not valid_def:
+        return resp
+
+    try:
+        valid_resp = valid_def(resp)
+    except Exception as exc:
+        _save_cache(
+            model,
+            prompt,
+            resp_content,
+            resp_type,
+            resp,
+            log_title="error",
+            message=f"Response validation failed: {exc}"
+        )
+        raise ValueError(f"❎ API response validation failed: {exc}") from exc
+
+    if valid_resp['status'] != 'success':
+        _save_cache(model, prompt, resp_content, resp_type, resp, log_title="error", message=valid_resp['message'])
+        raise ValueError(f"❎ API response error: {valid_resp['message']}")
+
+    return resp
+
 def _save_cache(model, prompt, resp_content, resp_type, resp, message=None, log_title="default"):
     with LOCK:
         logs = []
@@ -31,7 +66,7 @@ def _load_cache(prompt, resp_type, log_title):
         file = os.path.join(GPT_LOG_FOLDER, f"{log_title}.json")
         if os.path.exists(file):
             with open(file, 'r', encoding='utf-8') as f:
-                for item in json.load(f):
+                for item in reversed(json.load(f)):
                     if item["prompt"] == prompt and item["resp_type"] == resp_type:
                         return item["resp"]
         return False
@@ -44,13 +79,18 @@ def _load_cache(prompt, resp_type, log_title):
 def ask_gpt(prompt, resp_type=None, valid_def=None, log_title="default"):
     if not load_key("api.key"):
         raise ValueError("API key is not set")
+    model = load_key("api.model")
     # check cache
     cached = _load_cache(prompt, resp_type, log_title)
-    if cached:
+    if cached is not False:
         rprint("use cache response")
-        return cached
+        if resp_type == "json":
+            cached = _normalize_json_response(cached)
+        try:
+            return _validate_response(model, prompt, "<cached>", resp_type, cached, valid_def)
+        except ValueError as exc:
+            rprint(f"[yellow]cached response invalid, retrying with live request: {exc}[/yellow]")
 
-    model = load_key("api.model")
     base_url = load_key("api.base_url")
     if 'ark' in base_url:
         base_url = "https://ark.cn-beijing.volces.com/api/v3" # huoshan base url
@@ -73,15 +113,11 @@ def ask_gpt(prompt, resp_type=None, valid_def=None, log_title="default"):
     resp_content = resp_raw.choices[0].message.content
     if resp_type == "json":
         resp = json_repair.loads(resp_content)
+        resp = _normalize_json_response(resp)
     else:
         resp = resp_content
-    
-    # check if the response format is valid
-    if valid_def:
-        valid_resp = valid_def(resp)
-        if valid_resp['status'] != 'success':
-            _save_cache(model, prompt, resp_content, resp_type, resp, log_title="error", message=valid_resp['message'])
-            raise ValueError(f"❎ API response error: {valid_resp['message']}")
+
+    resp = _validate_response(model, prompt, resp_content, resp_type, resp, valid_def)
 
     _save_cache(model, prompt, resp_content, resp_type, resp, log_title=log_title)
     return resp

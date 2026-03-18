@@ -49,9 +49,15 @@ def split_sentence(sentence, num_parts, word_limit=20, index=-1, retry_attempt=0
     """Split a long sentence using GPT and return the result as a string."""
     split_prompt = get_split_prompt(sentence, num_parts, word_limit)
     def valid_split(response_data):
-        choice = response_data["choice"]
+        if not isinstance(response_data, dict):
+            return {"status": "error", "message": f"Expected JSON object, got {type(response_data).__name__}"}
+        choice = str(response_data.get("choice", "")).strip()
+        if not choice:
+            return {"status": "error", "message": "Missing required key: `choice`"}
         if f'split{choice}' not in response_data:
             return {"status": "error", "message": "Missing required key: `split`"}
+        if not isinstance(response_data[f"split{choice}"], str):
+            return {"status": "error", "message": f"split{choice} must be a string"}
         if "[br]" not in response_data[f"split{choice}"]:
             return {"status": "error", "message": "Split failed, no [br] found"}
         return {"status": "success", "message": "Split completed"}
