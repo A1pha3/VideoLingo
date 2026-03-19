@@ -1,9 +1,10 @@
 import concurrent.futures
 from difflib import SequenceMatcher
 import math
+from typing import Any
 from core.prompts import get_split_prompt
 from core.spacy_utils.load_nlp_model import init_nlp
-from core.utils import *
+from core.utils import ask_gpt, check_file_exists, get_joiner, load_key
 from rich.console import Console
 from rich.table import Table
 from core.utils.models import _3_1_SPLIT_BY_NLP, _3_2_SPLIT_BY_MEANING
@@ -48,23 +49,29 @@ def find_split_positions(original, modified):
 def split_sentence(sentence, num_parts, word_limit=20, index=-1, retry_attempt=0):
     """Split a long sentence using GPT and return the result as a string."""
     split_prompt = get_split_prompt(sentence, num_parts, word_limit)
-    def valid_split(response_data):
+    def valid_split(response_data: Any):
         if not isinstance(response_data, dict):
             return {"status": "error", "message": f"Expected JSON object, got {type(response_data).__name__}"}
         choice = str(response_data.get("choice", "")).strip()
         if not choice:
             return {"status": "error", "message": "Missing required key: `choice`"}
-        if f'split{choice}' not in response_data:
-            return {"status": "error", "message": "Missing required key: `split`"}
-        if not isinstance(response_data[f"split{choice}"], str):
-            return {"status": "error", "message": f"split{choice} must be a string"}
-        if "[br]" not in response_data[f"split{choice}"]:
+        split_key = f"split{choice}"
+        split_value = response_data.get(split_key)
+        if split_value is None:
+            return {"status": "error", "message": f"Missing required key: `{split_key}`"}
+        if not isinstance(split_value, str):
+            return {"status": "error", "message": f"{split_key} must be a string"}
+        if "[br]" not in split_value:
             return {"status": "error", "message": "Split failed, no [br] found"}
         return {"status": "success", "message": "Split completed"}
     
     response_data = ask_gpt(split_prompt + " " * retry_attempt, resp_type='json', valid_def=valid_split, log_title='split_by_meaning')
-    choice = response_data["choice"]
-    best_split = response_data[f"split{choice}"]
+    choice = str(response_data.get("choice", "")).strip() if isinstance(response_data, dict) else ""
+    split_key = f"split{choice}" if choice else ""
+    best_split = response_data.get(split_key) if isinstance(response_data, dict) else None
+    if not isinstance(best_split, str):
+        console.print(f"[red]❌ Invalid split response, fallback to original sentence: {response_data}[/red]")
+        return sentence
     split_points = find_split_positions(sentence, best_split)
     # split the sentence based on the split points
     for i, split_point in enumerate(split_points):
@@ -104,7 +111,12 @@ def parallel_split_sentences(sentences, max_length, max_workers, nlp, retry_atte
                 new_sentences[index] = [sentence]
 
         for future, index, num_parts, sentence in futures:
-            split_result = future.result()
+            try:
+                split_result = future.result()
+            except Exception as exc:
+                console.print(f"[red]❌ Sentence {index} split failed: {exc}[/red]")
+                new_sentences[index] = [sentence]
+                continue
             if split_result:
                 split_lines = split_result.strip().split('\n')
                 new_sentences[index] = [line.strip() for line in split_lines]
