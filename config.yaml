@@ -13,7 +13,7 @@ display_language: "zh-CN"
 api:
   key: ''
   base_url: 'https://api.minimaxi.com'
-  model: 'MiniMax-M2.5'
+  model: 'MiniMax-M2.7'
   llm_support_json: true
 # *Number of LLM multi-threaded accesses, set to 1 if using local LLM
 max_workers: 4
@@ -108,7 +108,7 @@ sf_cosyvoice2:
 
 # Edge TTS configuration
 edge_tts:
-  voice: 'zh-CN-XiaoxiaoNeural'
+  voice: 'zh-CN-YunxiNeural'
 
 # SoVITS configuration
 gpt_sovits:
