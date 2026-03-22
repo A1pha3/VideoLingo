@@ -36,13 +36,18 @@ def _default_voice_for_target_language() -> str:
     return "en-US-JennyNeural"
 
 
-def _resolve_voice() -> str:
+def _resolve_voice() -> tuple[str, str, str]:
     edge_set = load_key("edge_tts")
     configured_voice = str(edge_set.get("voice", "") or "").strip()
     if not configured_voice:
-        return _default_voice_for_target_language()
+        default_voice = _default_voice_for_target_language()
+        return default_voice, "default", configured_voice
 
-    return VOICE_ALIASES.get(configured_voice.lower(), configured_voice)
+    resolved_voice = VOICE_ALIASES.get(configured_voice.lower(), configured_voice)
+    if resolved_voice != configured_voice:
+        return resolved_voice, "alias", configured_voice
+
+    return resolved_voice, "configured", configured_voice
 
 
 async def _save_edge_audio(text: str, save_path: Path, voice: str) -> None:
@@ -65,10 +70,17 @@ async def _save_edge_audio(text: str, save_path: Path, voice: str) -> None:
 
 
 def edge_tts(text, save_path):
-    voice = _resolve_voice()
+    voice, voice_source, configured_voice = _resolve_voice()
 
     speech_file_path = Path(save_path)
     speech_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if voice_source == "default":
+        print(f"Edge TTS voice not configured, fallback to default voice: {voice}")
+    elif voice_source == "alias":
+        print(f"Edge TTS voice alias resolved: {configured_voice} -> {voice}")
+    else:
+        print(f"Edge TTS using configured voice: {voice}")
 
     asyncio.run(_save_edge_audio(text=text, save_path=speech_file_path, voice=voice))
     print(f"Audio saved to {speech_file_path} with voice {voice}")

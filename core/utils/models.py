@@ -24,6 +24,7 @@ _BACKGROUND_AUDIO_FILE = "output/audio/background.mp3"
 _AUDIO_REFERS_DIR = "output/audio/refers"
 _AUDIO_SEGS_DIR = "output/audio/segs"
 _AUDIO_TMP_DIR = "output/audio/tmp"
+_AUDIO_TTS_SIGNATURE = "output/audio/tts_signature.json"
 
 # ------------------------------------------
 # 导出
@@ -45,5 +46,6 @@ __all__ = [
     "_BACKGROUND_AUDIO_FILE",
     "_AUDIO_REFERS_DIR",
     "_AUDIO_SEGS_DIR",
-    "_AUDIO_TMP_DIR"
+    "_AUDIO_TMP_DIR",
+    "_AUDIO_TTS_SIGNATURE"
 ]

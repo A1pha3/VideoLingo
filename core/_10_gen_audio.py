@@ -3,6 +3,7 @@ import time
 import shutil
 import subprocess
 import ast
+import json
 from typing import Tuple
 
 import pandas as pd
@@ -21,6 +22,50 @@ console = Console()
 TEMP_FILE_TEMPLATE = f"{_AUDIO_TMP_DIR}/{{}}_temp.wav"
 OUTPUT_FILE_TEMPLATE = f"{_AUDIO_SEGS_DIR}/{{}}.wav"
 WARMUP_SIZE = 5
+
+
+def get_tts_cache_signature() -> dict:
+    tts_method = load_key("tts_method")
+    signature = {
+        "tts_method": tts_method,
+        "target_language": load_key("target_language"),
+    }
+
+    try:
+        signature[tts_method] = load_key(tts_method)
+    except Exception:
+        signature[tts_method] = None
+
+    return signature
+
+
+def invalidate_audio_cache_if_needed() -> None:
+    current_signature = get_tts_cache_signature()
+    previous_signature = None
+
+    if os.path.exists(_AUDIO_TTS_SIGNATURE):
+        try:
+            with open(_AUDIO_TTS_SIGNATURE, "r", encoding="utf-8") as signature_file:
+                previous_signature = json.load(signature_file)
+        except Exception:
+            previous_signature = None
+
+    if previous_signature == current_signature:
+        return
+
+    for folder_path in (_AUDIO_TMP_DIR, _AUDIO_SEGS_DIR):
+        if os.path.exists(folder_path):
+            shutil.rmtree(folder_path)
+            rprint(f"[yellow]♻️ Cleared cached audio folder due to TTS config change: {folder_path}[/yellow]")
+
+    for file_path in ("output/dub.mp3", "output/dub.srt", "output/normalized_dub.wav"):
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            rprint(f"[yellow]♻️ Removed stale generated file due to TTS config change: {file_path}[/yellow]")
+
+    os.makedirs(_AUDIO_DIR, exist_ok=True)
+    with open(_AUDIO_TTS_SIGNATURE, "w", encoding="utf-8") as signature_file:
+        json.dump(current_signature, signature_file, ensure_ascii=False, indent=2)
 
 
 class _NumpyEvalProxy:
@@ -241,6 +286,8 @@ def gen_audio() -> None:
     """Main function: Generate audio and process timeline"""
     rprint("[bold magenta]🚀 Starting audio generation process...[/bold magenta]")
     
+    invalidate_audio_cache_if_needed()
+
     # 🎯 Step1: Create necessary directories
     os.makedirs(_AUDIO_TMP_DIR, exist_ok=True)
     os.makedirs(_AUDIO_SEGS_DIR, exist_ok=True)
