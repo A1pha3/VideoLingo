@@ -433,6 +433,15 @@ if __name__ == "__main__":
 
 ### 4.3 侧边栏设置开发
 
+当前版本中，配音相关设置除了 TTS 方法和 voice 之外，还包括 `双语配音字幕` 开关：
+
+- 位置：侧边栏 `Dubbing Settings`
+- 关闭时：配音视频仅显示翻译字幕
+- 开启时：配音视频同时显示翻译字幕和原文字幕
+- 持久化配置键：`bilingual_dub_subtitles`
+
+这个开关最终影响的是配音阶段生成的 `output/dub.srt`，因此会直接改变最终配音视频烧录进去的字幕内容。
+
 `core/st_utils/sidebar_setting.py`：
 
 ```python

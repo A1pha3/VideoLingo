@@ -203,6 +203,15 @@ def page_setting():
             st.rerun()
     with st.expander(t("Dubbing Settings"), expanded=True):
         tts_methods = ["azure_tts", "openai_tts", "fish_tts", "sf_fish_tts", "edge_tts", "gpt_sovits", "custom_tts", "sf_cosyvoice2", "f5tts"]
+        bilingual_dub_subtitles = st.toggle(
+            t("Bilingual Dubbing Subtitles"),
+            value=load_key("bilingual_dub_subtitles"),
+            help=t("Show source text together with translated subtitles in dubbed video."),
+        )
+        if bilingual_dub_subtitles != load_key("bilingual_dub_subtitles"):
+            update_key("bilingual_dub_subtitles", bilingual_dub_subtitles)
+            st.rerun()
+
         current_tts_method = load_key("tts_method")
         select_tts = st.selectbox(
             t("TTS Method"),

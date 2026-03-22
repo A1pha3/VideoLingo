@@ -41,6 +41,8 @@
     "Mode 2: Use first audio from video as reference": "Modo 2: Usar el primer audio del video como referencia",
     "Mode 3: Use each audio from video as reference": "Modo 3: Usar cada audio del video como referencia",
     "Configure reference audio mode for GPT-SoVITS": "Configurar modo de audio de referencia para GPT-SoVITS",
+    "Bilingual Dubbing Subtitles": "Subtítulos de doblaje bilingües",
+    "Show source text together with translated subtitles in dubbed video.": "Muestra el texto original junto con los subtítulos traducidos en el video doblado.",
     "Edge TTS Voice": "Voz Edge TTS",
     "=====NOTE=====": "Lo siguiente es el contenido de st.py",
     "b. Translate and Generate Subtitles": "b. Traducir y generar subtítulos",

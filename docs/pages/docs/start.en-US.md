@@ -172,6 +172,11 @@ Before installing VideoLingo, ensure you have installed Git and Anaconda.
 
    ![tutorial](./en_page.png)
 
+   Additional note: the sidebar `Dubbing Settings` section now includes a `Bilingual Dubbing Subtitles` toggle.
+   - Off: dubbed videos show translated subtitles only.
+   - On: dubbed videos show both translated subtitles and source text.
+   - This option is persisted to `config.yaml` as `bilingual_dub_subtitles`.
+
 6. (Optional) More settings can be manually modified in `config.yaml`, watch command line output during operation. To use custom terms, add them to `custom_terms.xlsx` before processing, e.g. `Baguette | French bread | Not just any bread!`.
 
 > Need help? Our [AI Assistant](https://share.fastgpt.in/chat/share?shareId=066w11n3r9aq6879r4z0v9rh) is here to guide you through any issues!

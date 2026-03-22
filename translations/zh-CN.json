@@ -41,6 +41,8 @@
     "Mode 2: Use first audio from video as reference": "模式2:使用视频中的第一段音频作为参考",
     "Mode 3: Use each audio from video as reference": "模式3:使用视频中的每段音频作为参考",
     "Configure reference audio mode for GPT-SoVITS": "配置GPT-SoVITS的参考音频模式",
+    "Bilingual Dubbing Subtitles": "双语配音字幕",
+    "Show source text together with translated subtitles in dubbed video.": "在配音视频中同时显示原文和翻译字幕。",
     "Edge TTS Voice": "Edge TTS语音",
     "=====NOTE=====": "以下是st.py中的内容",
     "b. Translate and Generate Subtitles": "b. 翻译并生成字幕",

@@ -41,6 +41,8 @@
     "Mode 2: Use first audio from video as reference": "Режим 2: Использовать первое аудио из видео как эталон",
     "Mode 3: Use each audio from video as reference": "Режим 3: Использовать каждое аудио из видео как эталон",
     "Configure reference audio mode for GPT-SoVITS": "Настройка режима эталонного аудио для GPT-SoVITS",
+    "Bilingual Dubbing Subtitles": "Двуязычные субтитры дубляжа",
+    "Show source text together with translated subtitles in dubbed video.": "Показывать исходный текст вместе с переведёнными субтитрами в дублированном видео.",
     "Edge TTS Voice": "Голос Edge TTS",
     "=====NOTE=====": "Содержимое st.py ниже",
     "=====NOTE2=====": "Ниже содержится в install.py",

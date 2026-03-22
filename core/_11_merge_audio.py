@@ -52,11 +52,14 @@ def load_and_flatten_data(excel_file):
     df = pd.read_excel(excel_file)
     lines = [parse_lines_cell(line) for line in df['lines'].tolist()]
     lines = [item for sublist in lines for item in sublist]
+
+    src_lines = [parse_lines_cell(line) for line in df['src_lines'].tolist()] if 'src_lines' in df.columns else [[] for _ in range(len(df))]
+    src_lines = [item for sublist in src_lines for item in sublist]
     
     new_sub_times = [parse_time_ranges_cell(time) for time in df['new_sub_times'].tolist()]
     new_sub_times = [item for sublist in new_sub_times for item in sublist]
     
-    return df, lines, new_sub_times
+    return df, lines, src_lines, new_sub_times
 
 def get_audio_files(df):
     """Generate a list of audio file paths"""
@@ -117,16 +120,20 @@ def merge_audio_segments(audios, new_sub_times, sample_rate):
     return merged_audio
 
 def create_srt_subtitle():
-    df, lines, new_sub_times = load_and_flatten_data(_8_1_AUDIO_TASK)
+    df, lines, src_lines, new_sub_times = load_and_flatten_data(_8_1_AUDIO_TASK)
+    bilingual_dub_subtitles = load_key("bilingual_dub_subtitles")
     
     with open(DUB_SUB_FILE, 'w', encoding='utf-8') as f:
-        for i, ((start_time, end_time), line) in enumerate(zip(new_sub_times, lines), 1):
+        for i, ((start_time, end_time), line, src_line) in enumerate(zip(new_sub_times, lines, src_lines), 1):
             start_str = f"{int(start_time//3600):02d}:{int((start_time%3600)//60):02d}:{int(start_time%60):02d},{int((start_time*1000)%1000):03d}"
             end_str = f"{int(end_time//3600):02d}:{int((end_time%3600)//60):02d}:{int(end_time%60):02d},{int((end_time*1000)%1000):03d}"
             
             f.write(f"{i}\n")
             f.write(f"{start_str} --> {end_str}\n")
-            f.write(f"{line}\n\n")
+            subtitle_text = line
+            if bilingual_dub_subtitles and src_line:
+                subtitle_text = f"{line}\n{src_line}"
+            f.write(f"{subtitle_text}\n\n")
     
     rprint(f"[bold green]✅ Subtitle file created: {DUB_SUB_FILE}[/bold green]")
 
@@ -135,7 +142,7 @@ def merge_full_audio():
     console.print("\n[bold cyan]🎬 Starting audio merging process...[/bold cyan]")
     
     with console.status("[bold cyan]📊 Loading data from Excel...[/bold cyan]"):
-        df, lines, new_sub_times = load_and_flatten_data(_8_1_AUDIO_TASK)
+        df, lines, src_lines, new_sub_times = load_and_flatten_data(_8_1_AUDIO_TASK)
     console.print("[bold green]✅ Data loaded successfully[/bold green]")
     
     with console.status("[bold cyan]🔍 Getting audio file list...[/bold cyan]"):
