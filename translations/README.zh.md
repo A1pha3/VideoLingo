@@ -137,6 +137,23 @@ docker run -d -p 8501:8501 --gpus all videolingo
 
 详细的安装、API 配置、批量说明可以参见文档：[English](/docs/pages/docs/start.en-US.md) | [简体中文](/docs/pages/docs/start.zh-CN.md)
 
+### 目录批处理 CLI
+
+如果你希望不用 Streamlit，而是直接对一个目录中的视频执行“翻译 + 字幕 + 配音”批处理，可以使用新的命令行入口：
+
+```bash
+source scripts/activate_project_conda_env.zsh
+python -m cli.batch_translate <input_dir> <output_dir>
+```
+
+常用参数：
+
+- `--dry-run`：只检查和生成执行计划，不真正处理视频
+- `--recursive`：递归扫描子目录
+- `--force`：强制重跑已成功任务
+
+详细说明见：[docs/cn/product/batch_translate_user_guide.md](docs/cn/product/batch_translate_user_guide.md)
+
 ## 当前限制
 1. WhisperX 转录效果可能受到视频背景声影响，因为使用了 wav2vac 模型进行对齐。对于背景音乐较大的视频，请开启人声分离增强。另外，如果字幕以数字或特殊符号结尾，可能会导致提前截断，这是因为 wav2vac 无法将数字字符（如"1"）映射到其发音形式（"one"）。
 

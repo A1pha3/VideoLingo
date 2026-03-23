@@ -1,8 +1,10 @@
 #!/usr/bin/env zsh
 
-set -euo pipefail
+() {
+emulate -L zsh
+setopt errexit nounset pipefail
 
-SCRIPT_PATH="${(%):-%N}"
+SCRIPT_PATH="${(%):-%x}"
 PROJECT_ROOT="${SCRIPT_PATH:A:h:h}"
 PREFIX_ENV="$PROJECT_ROOT/.conda-env"
 PROJECT_CACHE_ROOT="$PROJECT_ROOT/.cache"
@@ -35,3 +37,4 @@ conda activate "$PREFIX_ENV"
 
 echo "已激活 VideoLingo 项目前缀环境。"
 echo "python: $(which python)"
+} "$@"

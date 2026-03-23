@@ -1,8 +1,10 @@
 #!/usr/bin/env zsh
 
-set -euo pipefail
+() {
+emulate -L zsh
+setopt errexit nounset pipefail
 
-SCRIPT_PATH="${(%):-%N}"
+SCRIPT_PATH="${(%):-%x}"
 PROJECT_ROOT="${SCRIPT_PATH:A:h:h}"
 PREFIX_ENV="$PROJECT_ROOT/.conda-env"
 PROJECT_CACHE_ROOT="$PROJECT_ROOT/.cache"
@@ -223,3 +225,4 @@ echo "  export TRANSFORMERS_CACHE=$PROJECT_HF_CACHE"
 echo "  export XDG_CACHE_HOME=$PROJECT_CACHE_ROOT"
 echo "  export NLTK_DATA=$PROJECT_NLTK_DATA"
 echo "  conda activate $PREFIX_ENV"
+} "$@"

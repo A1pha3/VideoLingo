@@ -9,6 +9,6 @@ with open('requirements.txt', encoding='utf-8') as f:
 setup(
     name=NAME,
     version=VERSION,
-    packages=find_packages(include=[NAME, f'{NAME}.*']),
+    packages=find_packages(exclude=["docs*", "history*", ".cache*", ".conda*", ".conda-env*", "output*", "logs*"]),
     install_requires=requirements
 )

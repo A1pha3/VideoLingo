@@ -176,3 +176,7 @@ dev/
 installer_files/
 logs/
 config.yaml
+
+# batch_translate CLI runtime artifacts
+/.videolingo_cli/
+/.videolingo_cli*/
